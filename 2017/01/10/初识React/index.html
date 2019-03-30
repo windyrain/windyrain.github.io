@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com">
+  
+  
+  
+  <title>初识React | 小封的分享</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="框架,react,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+    <meta name="description" content="前端及其上下游技术分享，建议">
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">oneadvise.cn</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path>
+          
+            <a href="javascript:void(0);" v-else>抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://github.com/windyrain/" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://juejin.im/user/589c5dfc128fe1005807aeda" target="_blank">
+                    掘金
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>初识React</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2017-01-10
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/框架/">
+            框架
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="初识React"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>© fengyu学习</p>
+<blockquote>
+<p>16年9月，为了重构的项目，在一个星期内，我囫囵吞枣似地学习了React。</p>
+</blockquote>
+<blockquote>
+<p>即便是4个月后的今天，回想起当日，我还是会记得5个小伙伴，每天晚上从7点半起，就准时到会议室里学习React的场景，不免又觉得有些好笑。</p>
+</blockquote>
+<blockquote>
+<p>如今，重构的项目进入了最后的联调阶段，我也算是经过了实战的洗礼了，不过在探索React的路上跌跌撞撞，确没能留下半点记录，实属遗憾。</p>
+</blockquote>
+<blockquote>
+<p>我决定将这四个月的经历整理整理，记录下来，已便将来更好的工作学习！</p>
+</blockquote>
+<h2 id="1、Why-React"><a href="#1、Why-React" class="headerlink" title="1、Why React?"></a>1、Why React?</h2><p>这是我在项目初期一直在思考的问题，为什么重构的项目选择了 <strong>React</strong> 。</p>
+<p>最初我是这么想的</p>
+<ul>
+<li><code>追求时尚新技术，好耶，棒棒哒！</code></li>
+</ul>
+<p>后来我发现了</p>
+<ul>
+<li><p><code>健全的学习文档及良好的社区</code></p>
+</li>
+<li><p><code>github各种轮子</code></p>
+</li>
+<li><p><code>需要兼容IE8</code></p>
+</li>
+</ul>
+<p>再后来我觉得是</p>
+<ul>
+<li><p><code>数据驱动视图</code></p>
+</li>
+<li><p><code>方便自定义UI</code></p>
+</li>
+</ul>
+<p>由于我们是第三方脚本，为了良好的兼容性，之前的脚本都是用 <strong>原生JS</strong> 。所以我对这么大的框架一下似乎也接受不了。</p>
+<p>不过重构的负责人 <strong>XB</strong> 哥还是说服了我。</p>
+<ul>
+<li><p><code>今日带宽不比往日</code></p>
+</li>
+<li><p><code>React@14做了拆分，可以有选择性的引用</code></p>
+</li>
+</ul>
+<p>加上我的内心也是向往新技术的。</p>
+<p>经过了一段时间的使用，我觉得 <strong>React</strong> 确实有其独特之处，相较于 <strong>原生JS</strong> 的好处：</p>
+<ul>
+<li><p><code>JSX语法，拥有清晰的dom结构和样式引用，带来与原生JS创建DOM不一样的体验</code></p>
+</li>
+<li><p><code>数据驱动视图，一定程度上简化了视图与逻辑分离的难度</code></p>
+</li>
+</ul>
+<p>下面就开始干货吧！</p>
+<h2 id="2、组件、state与props"><a href="#2、组件、state与props" class="headerlink" title="2、组件、state与props"></a>2、组件、state与props</h2><p><strong>Component</strong> 是 <strong>React</strong> 中重要的组成部分，大至整个页面，小到一个按钮，都有可能是一个组件。</p>
+<p>而 <strong>state</strong> 与 <strong>props</strong> 则是一个组件绽放光彩的必备良药！</p>
+<p>举个栗子：</p>
+<pre><code>import React, {Component} from &quot;react&quot;;
+import ReactDOM from &quot;react-dom&quot;;
+
+class SimpleComponent extends Component {
+
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return &lt;div&gt;我只是我&lt;/div&gt;
+  }
+}
+
+ReactDOM.render(&lt;SimpleComponent/&gt;, document.getElementById(&apos;app&apos;));
+</code></pre><p>如此一来 <strong>SimpleComponent</strong> 组件的 <code>render()</code> 方法就将一个最简单的组件渲染到了网页上，这与html并没有什么区别，并不能展现 <strong>React</strong> 的强大威力！</p>
+<p>下面我们使用 <strong>state</strong> 给这个 <strong>SimpleComponent</strong> 做做包装</p>
+<pre><code>import React, {Component} from &quot;react&quot;;
+import ReactDOM from &quot;react-dom&quot;;
+
+class SimpleComponent1 extends Component {
+  constructor(props) {
+    super();
+    this.state = {
+      content: &apos;我就是我，那颜色不一样的烟火&apos;,
+      color: &apos;#F00&apos;
+    };
+  }
+
+  render() {
+    let style = {
+      color: this.state.color
+    }
+
+    return &lt;p style={style}&gt;{this.state.content}&lt;/p&gt;
+  }
+
+  componentDidMount() {
+    setInterval(() =&gt; {
+      this.setState({
+        color: this.state.color === &apos;#F00&apos; ? &apos;#0F0&apos; : &apos;#F00&apos;
+      })
+    }, 1000);
+  }
+}
+
+ReactDOM.render(
+  &lt;div&gt;
+    &lt;SimpleComponent/&gt;
+    &lt;SimpleComponent1/&gt;
+  &lt;/div&gt;,
+  document.getElementById(&apos;app&apos;));  
+</code></pre><p>在 <code>componentDidMount()</code> （<strong>React</strong> 组件自带方法，在第一次执行 <code>render()</code> 方法后执行，表示组件已经加载完毕）中采用 <code>setState()</code> 方法（ <strong>React</strong> 组件自带方法，能够设置 <strong>this.state</strong> 中属性的值）对 <strong>this.state</strong> 中的 <strong>color</strong> 属性进行设置，使得组件的颜色能够动态改变。</p>
+<p>可以看到，利用 <strong>state</strong> ，我们可以轻松的实现 <strong>DOM</strong> 的渲染，而不需要直接操作 <strong>DOM</strong>，但是仅仅有 <strong>state</strong> ，似乎还缺少了些什么，我们还可以利用 <strong>props</strong> ，将这个组件更加的完善！</p>
+<pre><code>class SimpleComponent2 extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      content: this.props.content,
+      color: &apos;#F00&apos;
+    }
+  }
+
+  render() {
+    let style = {
+      color: this.state.color
+    }
+
+    return &lt;p style={style}&gt;{this.state.content}&lt;/p&gt;
+  }
+
+  componentDidMount() {
+    setInterval(() =&gt; {
+      this.setState({
+        color: this.state.color === &apos;#F00&apos; ? &apos;#0F0&apos; : &apos;#F00&apos;
+      })
+    }, 1000);
+  }
+}
+
+ReactDOM.render(
+  &lt;div&gt;
+    &lt;SimpleComponent/&gt;
+    &lt;SimpleComponent1/&gt;
+    &lt;SimpleComponent2 content=&quot;我就是我，颜色不一样的烟火&quot;/&gt;
+    &lt;SimpleComponent2 content=&quot;我也是烟火哦&quot;/&gt;
+  &lt;/div&gt;,
+  document.getElementById(&apos;app&apos;));
+</code></pre><p>首先 <strong>props</strong> 是依赖外部传入的，如上代码 <code>&lt;SimpleComponent2 content=&quot;我也是烟火哦&quot;/&gt;</code> 。</p>
+<p>其次在 <strong>Component</strong> 中使用 <strong>props</strong> 是直接调用 <code>this.props.属性名称</code> 的。</p>
+<p>了解清楚了 <strong>props</strong> 的用法，再来谈谈使用的必要性。</p>
+<p>组件库（泛指如：按钮、日历，树，表格、列表、网格）等基础组件，编写的目的是为了方便使用的。</p>
+<p>尽管上面举的例子并不复杂，然而如果我们需要在多个页面使用这个效果时，并不是在每个页面都写一个这样的组件。</p>
+<p>而是提取出组件的共同点，找出他们的不同点，共同点利用 <strong>state</strong> 来实现，不同点利用 <strong>props</strong> 传入，来达到复用组件的目的</p>
+<p>其实 <strong>state</strong> 与 <strong>props</strong> 的作用还不止这些，在后续的总结中，还有父子组件通信方面的作用。</p>
+<h2 id="3、写在文末"><a href="#3、写在文末" class="headerlink" title="3、写在文末"></a>3、写在文末</h2><p><strong>React</strong> 的故事才刚刚开始，接触React的时间也不算太长。如有描述不周的地方，请斧正，万分感谢。</p>
+<p>相关代码，可以在<a href="https://github.com/windyrain/React_Learn" target="_blank" rel="noopener">github</a>上下载</p>
+<p>从6月到现在，已有半年没有写文章了。虽说很忙，亦不过是借口而已！</p>
+<p>庆幸自己能在 2017 年的初始，重新拾起总结的习惯，新年新气象嘛，加油！</p>
+
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : 封宇 <br>
+        
+        原文链接 : <a href>http://blog.oneadvise.cn/2017/01/10/初识React/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpeg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/react/">
+              #react
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2016/06/26/Vue-js学习笔记(6)/" target="_self">Vue.js学习笔记（6）</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/2017/04/29/阴阳师悬赏封印查询助手(1)/" target="_self">阴阳师悬赏封印查询助手(1)</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz",
+      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2018, 1, 10).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com">
+  
+  
+  
+  <title>阴阳师悬赏封印查询助手(1) | 小封的分享</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="App实践,react-native,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+    <meta name="description" content="前端及其上下游技术分享，建议">
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">oneadvise.cn</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path>
+          
+            <a href="javascript:void(0);" v-else>抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://github.com/windyrain/" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://juejin.im/user/589c5dfc128fe1005807aeda" target="_blank">
+                    掘金
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>阴阳师悬赏封印查询助手(1)</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2017-04-29
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/App实践/">
+            App实践
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="阴阳师悬赏封印查询助手(1)"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>© fengyu学习</p>
+<blockquote>
+<p>因为很多身边的小伙伴都在玩阴阳师，我也加入了非酋大军中。</p>
+</blockquote>
+<blockquote>
+<p>如果大家都还保留着一开始玩的激情，亦或是还在追求游戏中更加优秀，肯定不会放弃每天的悬赏封印。</p>
+</blockquote>
+<blockquote>
+<p>这是一个可以得到勾玉，碎片，加成，体力，金币的免费途径！</p>
+</blockquote>
+<blockquote>
+<p>下面就进入正题，让我们一起来看看小助手的诞生之路</p>
+</blockquote>
+<h2 id="1、为什么要做一个小助手"><a href="#1、为什么要做一个小助手" class="headerlink" title="1、为什么要做一个小助手"></a>1、为什么要做一个小助手</h2><p>悬赏封印：在战斗中消灭指定数量的式神（涂壁 0/10）<br>我们来看一下官方的提示，尽管官方提示中给出了需要封印的式神出现的探索关卡，但是并未给出每个关卡式神出现的数量。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2088298-8915ef52b001c604.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="涂壁的悬赏封印官方提示"></p>
+<p>需求就这么产生了：</p>
+<ul>
+<li>哪个关卡涂壁多呢？</li>
+<li>除了探索关卡，还有哪有涂壁呢？</li>
+</ul>
+<p>这只是从官方的提示衍生出的需求，完整的需求应该是这样的：</p>
+<ul>
+<li>式神列表 （提供所有式神的列表）</li>
+<li>便捷搜索 （可以利用首字母或线索进行查询）</li>
+<li>完善查询范围 （不仅是探索关卡，而且应该覆盖御魂，妖气封印等）</li>
+<li>碎片按数量排序 （查询结果由多到少排序，提升完成效率）</li>
+</ul>
+<h2 id="2、式神列表"><a href="#2、式神列表" class="headerlink" title="2、式神列表"></a>2、式神列表</h2><p>既然有了小目标，我们就动手把它实现吧！<br>式神列表需要使用到<code>React Native</code>的<code>ListView</code>组件，让我们一起来学习一番吧！</p>
+<h3 id="2-1、代码思路"><a href="#2-1、代码思路" class="headerlink" title="2.1、代码思路"></a>2.1、代码思路</h3><ul>
+<li>实现组件  <code>ShikigamiListView</code> 式神列表</li>
+<li>在<code>constructor</code>中定义数据源</li>
+<li><code>cloneWithRowsAndSections</code> 将以下数据格式转变为<code>Listview</code>可用的数据格式，其中 <strong>B</strong>，<strong>C</strong> 将作为  <code>section</code>，其对应键值作为 <code>section</code> 下的 <code>row</code> 的数据来源<pre><code>{
+  &quot;B&quot;: [
+    {
+      &quot;icon&quot;: require(&apos;../images/227.png&apos;),
+      &quot;name&quot;: &quot;兵俑&quot;,
+      &quot;initial&quot;: &quot;B&quot;,
+      &quot;level&quot;: &quot;R&quot;,
+      &quot;clue&quot;: &quot;剑/坚甲 石化&quot;
+    }, 
+    {
+      &quot;icon&quot;: require(&apos;../images/264.png&apos;),
+      &quot;name&quot;: &quot;白狼&quot;,
+      &quot;initial&quot;: &quot;B&quot;,
+      &quot;level&quot;: &quot;SR&quot;
+    }
+  ],
+  &quot;C&quot;: [
+    {
+      &quot;icon&quot;: require(&apos;../images/265.png&apos;),
+      &quot;name&quot;: &quot;茨木童子&quot;,
+      &quot;initial&quot;: &quot;C&quot;,
+      &quot;level&quot;: &quot;SSR&quot;
+    }
+  ]
+}
+</code></pre></li>
+<li>使用<code>ListView</code>组件暴露的API，区块头部和行分块渲染<ul>
+<li><code>renderSectionHeader</code>：渲染区块头部</li>
+<li><code>renderRow</code>：渲染行</li>
+</ul>
+</li>
+<li>实现<code>renderSectionHeader</code>，将SectionId（A - Z）作为渲染值，部分字母由于没有以此为拼音首字母的式神，所以不会出现，如 A</li>
+<li>实现<code>renderRow</code>，按照 <code>flex</code> 布局对式神的头像、名字、稀有度进行布局，并将查询按钮使用 <code>flex-end</code> 属性居于行的末端</li>
+</ul>
+<h3 id="2-2-实现代码"><a href="#2-2-实现代码" class="headerlink" title="2.2 实现代码"></a>2.2 实现代码</h3><p>以下代码尽管基本完整，但细心的朋友会发现以下几点</p>
+<ul>
+<li><p>没有<code>import react、react-native</code>等，这个是为了缩短篇幅，大家就自己引入吧</p>
+</li>
+<li><p><code>ShikigamiListViewData.get(SORTBYINITIAL)</code> 此方法得到的数据格式与代码思路列出的<code>json</code>数据是一致的。这个方法的实现将在后面的文章中讲述，是业务对象暴露出的方法。</p>
+</li>
+<li><p>没有粘贴样式代码：希望大家可以实战一下 <code>react-native</code> 的布局，如果对文章感兴趣的是前端工程师，自然会对这种与<code>inline-style</code>类似的基于<code>flex</code>的布局有所体会。</p>
+</li>
+</ul>
+<pre><code>// 1. 实现并导出式神列表组件
+export default class ShikigamiListView extends Component {
+  constructor(props) {
+    super();
+    // 2. 定义数据源
+    this.ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) =&gt; r1 !== r2,
+      sectionHeaderHasChanged:(s1, s2) =&gt; s1 !== s2
+    });
+    // 3. 使用this.ds的cloneWithRowsAndSections方法生成数据
+    this.state = {
+      dataSource: this.ds.cloneWithRowsAndSections(ShikigamiListViewData.get(SORTBYINITIAL))
+    };
+  }
+
+  render() {
+    // 4. 使用ListView暴露的api：renderSectionHeader, renderRow
+    return (
+      &lt;ListView
+        style={styles.container}
+        dataSource={this.state.dataSource}
+        renderSectionHeader={this._renderSectionHeader}
+        renderRow={this._renderRow}
+        &gt;
+      &lt;/ListView&gt;
+
+    );
+  }
+
+  // 5. 实现 renderSectionHeader
+  _renderSectionHeader = (sectionData, sectionId) =&gt; {
+    return (
+      &lt;View style={styles.section}&gt;
+        &lt;Text style={styles.initial}&gt;{sectionId}&lt;/Text&gt;
+      &lt;/View&gt;
+    );
+  }
+
+ // 6. 实现 renderRow
+  _renderRow = (rowData, sectionId, rowId) =&gt; {
+    let shikigami = rowData;
+    return (
+      &lt;View key={&apos;row_&apos; + shikigami.name} style={styles.row}&gt;
+        &lt;Image style={styles.shikigamiIcon} source={shikigami.icon}/&gt;
+        &lt;Text style={styles.shikigamiName}&gt;{shikigami.name}&lt;/Text&gt;
+        &lt;Text style={styles[&quot;shikigamiLevel&quot; + shikigami.level]}&gt;{shikigami.level}&lt;/Text&gt;
+        &lt;View style={styles.buttonWrapper}&gt;
+          &lt;TouchableHighlight
+            style={styles.fengyin}
+            underlayColor=&quot;rgba(248, 248, 240, 0.4)&quot;
+            &gt;
+            &lt;Text style={styles.fengyintext}&gt;封&lt;/Text&gt;
+          &lt;/TouchableHighlight&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+    );
+  }
+}
+</code></pre><h3 id="2-3-效果图"><a href="#2-3-效果图" class="headerlink" title="2.3 效果图"></a>2.3 效果图</h3><p><img src="http://upload-images.jianshu.io/upload_images/2088298-5f3be4ec56389575.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="式神列表.png"></p>
+<h2 id="3-写在文末"><a href="#3-写在文末" class="headerlink" title="3. 写在文末"></a>3. 写在文末</h2><p>式神列表的实现基本讲清楚了，后续文章将从以下几个角度继续记录小助手的成型过程，敬请期待！</p>
+<ul>
+<li>式神数据怎么来（半自动数据抓取）</li>
+<li>式神列表中面向对象的应用（业务层实现）</li>
+<li>本地搜索的实现 (组件之间相互通信)</li>
+<li>react-native输入框若干坑 （尝新填坑之路）</li>
+<li>小助手的上线之旅（从被拒到上架）</li>
+</ul>
+
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : 封宇 <br>
+        
+        原文链接 : <a href>http://blog.oneadvise.cn/2017/04/29/阴阳师悬赏封印查询助手(1)/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpeg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/react-native/">
+              #react-native
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2017/01/10/初识React/" target="_self">初识React</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/2017/05/01/阴阳师悬赏封印查询助手(2)/" target="_self">阴阳师悬赏封印查询助手(2)</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz",
+      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2018, 1, 10).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>

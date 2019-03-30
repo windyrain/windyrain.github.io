@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com">
+  
+  
+  
+  <title>Vue.js学习笔记（4） | 小封的分享</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="框架,vue,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+    <meta name="description" content="前端及其上下游技术分享，建议">
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">oneadvise.cn</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path>
+          
+            <a href="javascript:void(0);" v-else>抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://github.com/windyrain/" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://juejin.im/user/589c5dfc128fe1005807aeda" target="_blank">
+                    掘金
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>Vue.js学习笔记（4）</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2016-06-19
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/框架/">
+            框架
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="Vue-js学习笔记(4)"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>© fengyu学习</p>
+<blockquote>
+<p>不出所料，上班果然放松了我学习的心底防线</p>
+</blockquote>
+<blockquote>
+<p>这篇文章是工作日写好了大半的，今天整理出来，和大家一块分享一下</p>
+</blockquote>
+<blockquote>
+<p>今天的主要学习内容：<strong>Vue.js bind指令</strong> 与 <strong>DOM</strong> 样式不得不说的秘密</p>
+</blockquote>
+<h2 id="1、Vue-js-bind指令-与-DOM-样式不得不说的秘密"><a href="#1、Vue-js-bind指令-与-DOM-样式不得不说的秘密" class="headerlink" title="1、Vue.js bind指令 与 DOM 样式不得不说的秘密"></a>1、<strong>Vue.js bind指令</strong> 与 <strong>DOM</strong> 样式不得不说的秘密</h2><p>仔仔细细的看了一遍 <a href="&quot;http://cn.vuejs.org/guide/class-and-style.html&quot;">Class-Style</a>这一章教程！</p>
+<p>发现一个样式都快被绑定出花来，毕竟样式是前端3大模块的一部分，壮哉我大<strong>CSS</strong>。</p>
+<p>既然是绑定样式，怎么能没有样式代码呢！</p>
+<pre><code>&lt;style&gt;
+    .a{
+        color: red;
+    }
+
+    .b{
+        background-color: green;
+    }
+&lt;/style&gt;
+</code></pre><p>好吧，请略过我毫无语义的 <strong>className</strong>，欣赏一下我的配色方案 <strong>red + green better than dog XXX</strong> 。</p>
+<p>下面让我们看看以下这5种绑定样式的方法吧</p>
+<p>让我们先看1、2两种方式：</p>
+<pre><code>&lt;div id=&quot;vue_demo&quot; :class=&quot;{&apos;a&apos;:a, &apos;b&apos;:b}&quot;&gt;
+    {{content}}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo = new Vue({
+        el: &apos;#vue_demo&apos;,
+        data: {
+            a: true,
+            b: false,
+            content: &apos;第一种bind绑定样式方式, class=&quot;{\&apos;类名\&apos;:true|false, …… }&quot;&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><hr>
+<pre><code>&lt;div id=&quot;vue_demo1&quot; :class=&quot;myClass&quot;&gt;
+    {{ content }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo1 = new Vue({
+        el: &apos;#vue_demo1&apos;,
+        data: {
+            myClass : {
+                &apos;a&apos; : true,
+                &apos;b&apos; : false
+            },
+            content: &apos;第二种bind绑定样式方式, class=&quot;Vue实例对象的属性值，属性格式为{\&apos;类名\&apos; : true|false}&quot;&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><ul>
+<li><p>bind指令绑定样式方式1： <code>:class=&quot;{\&#39;类名\&#39;:true|false, …… }&quot;</code></p>
+</li>
+<li><p>bind指令绑定样式方式2： <code>:class=&quot;Vue实例对象的属性值&quot;</code>  <code>属性值格式为{\&#39;类名\&#39; : true|false}</code></p>
+</li>
+</ul>
+<p>相较之下，第二种方式明显更优，因为它可以形成语义！</p>
+<p>在两种方式介绍完后，<a href="&quot;http://cn.vuejs.org/guide/class-and-style.html&quot;">Class-Style</a>教程中，提到了一句话</p>
+<pre><code>我们也可以在这里绑定一个返回对象的**计算属性**。这是一个常用且强大的模式。
+</code></pre><p>我顿时蒙了，因为这句话后面，居然没有例子了！</p>
+<p>常用而强大的模式。。怎么常用，如何强大，完全不知道！！！！</p>
+<p>于是乎，我自己写了一个四不像的例子。</p>
+<pre><code>&lt;div id=&quot;vue_demo2&quot; :class=&quot;myClass&quot;&gt;
+    {{ content }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo2 = new Vue({
+        el: &apos;#vue_demo2&apos;,
+        data: {
+            style1: {
+                &apos;a&apos; : true
+            },
+            style2: {
+                &apos;b&apos; : false
+            },
+            content: &apos;第三种bind绑定样式方式, class=&quot;Vue实例对象的计算值，计算值可由多个样式参数拼接&quot;&apos;,
+            extend: function(o1, o2, override){
+                var o = {};
+                var fun = function(arg){
+                    for(key in arg){
+                        if( (!o.hasOwnProperty(key) &amp;&amp; arg.hasOwnProperty(key)) || override){
+                            o[key] = arg[key];
+                        }
+                    }
+                }
+                fun(o1);
+                fun(o2);
+                return o;
+            },
+
+        },
+        computed: {
+            myClass: function(){
+                return this.extend(this.style1, this.style2);
+            }
+        }
+    })
+&lt;/script&gt;
+</code></pre><p>我按照文章的描述，使用了一个计算属性，作为样式。但是我确实没有发现这么做有什么比第二种方式高大上的地方。</p>
+<p>常用而强大的形容，并没有得到良好的体现，而且我自己还被迫实现了一个合并 <strong>js</strong> 对象的方法</p>
+<p>我在这块的疑惑，希望能有小伙伴可以帮我解答一下！</p>
+<p>尽管四不像给我带来了疑惑，但我还是得继续把文章看完</p>
+<p>看下面这种绑定方式，<strong>v-bind</strong> + <strong>数组</strong> 绑定样式</p>
+<pre><code>&lt;div id=&quot;vue_demo3&quot; :class=&quot;[a,b]&quot;&gt;
+    {{ content }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo3 = new Vue({
+        el: &apos;#vue_demo3&apos;,
+        data: {
+            a: &apos;a&apos;,
+            b: &apos;b&apos;,
+            content: &apos;第四种bind绑定样式方式, class=&quot;[Vue对象属性值1，Vue对象属性值2]&quot;&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><p>仅仅从数组的角度来看这种方式，其实平淡无奇，但这个时候，我想到文章刚才提到的计算属性，且看我一试^_^!</p>
+<pre><code>&lt;div id=&quot;vue_demo4&quot; :class=&quot;myClass&quot;&gt;
+    {{ content }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo4 = new Vue({
+        el: &apos;#vue_demo4&apos;,
+        data: {
+            a: &apos;a&apos;,
+            b: &apos;b&apos;,
+            isA : true,
+            isB : false,
+            content: &apos;第五种bind绑定样式方式, class=&quot;计算属性，值为[Vue对象属性值1, Vue对象属性值2]&quot;&apos;
+        },
+        computed: {
+            myClass : function() {
+                var myClass = [];
+                if(this.isA) myClass.push(this.a);
+                if(this.isB) myClass.push(this.b);
+                return myClass;
+            }
+        }
+    })
+&lt;/script&gt;
+</code></pre><p>数组的累加颇为简单，只需要用push方法就可以了，而且我们还可以很清晰的加入判断条件。</p>
+<p>哇塞，莫非我主角光环附身了！</p>
+<pre><code>我们也可以在这里绑定一个返回对象的**计算属性**。这是一个常用且强大的模式。
+</code></pre><p>指的就是这种用法（个人猜测）！</p>
+<p>最后讲一讲利用 <strong>v-bind</strong> 绑定style属性！</p>
+<p>可能大家会很奇怪，既然都用 <strong>class</strong> 绑定了，何必需要 <strong>style</strong> 属性再来搅动风云呢？</p>
+<p>因为绑定 <strong>style</strong> 属性居然可以 <strong>自动添加样式前缀</strong> 。</p>
+<p>什么？我没听错吧，真的吗？这么666的功能吗？</p>
+<p>让我来测试一下！必须找个浏览器兼容性不是很好的属性，就选 <strong>flex</strong> 吧！</p>
+<pre><code>&lt;div id=&quot;vue_demo5&quot; :style=&quot;style&quot;&gt;
+    {{ content }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo5 = new Vue({
+        el: &apos;#vue_demo5&apos;,
+        data: {
+            content: &quot;css 自动添加前缀&quot;,
+            style: {
+                display: &apos;flex&apos;
+            }
+        }
+    })
+&lt;/script&gt;
+</code></pre><p>莫非我手头的浏览器都太新了，没有一点点变化，0.0。。有兴趣的朋友可以自己试试！</p>
+<h2 id="2-结语"><a href="#2-结语" class="headerlink" title="2.结语"></a>2.结语</h2><p>不提我的惰性导致blog迟迟不写了，讲一些这个礼拜发生的事情吧，生活，学习，工作都有！</p>
+<h3 id="1、移动端图片压缩，拍照图片（不论怎么拿着相机拍的）调整为正确的方向！"><a href="#1、移动端图片压缩，拍照图片（不论怎么拿着相机拍的）调整为正确的方向！" class="headerlink" title="1、移动端图片压缩，拍照图片（不论怎么拿着相机拍的）调整为正确的方向！"></a>1、移动端图片压缩，拍照图片（不论怎么拿着相机拍的）调整为正确的方向！</h3><p>之前也一直在使用这个工具，兼容性超过一大批百度到的压缩js插件。<br><a href="https://github.com/think2011/localResizeIMG" target="_blank" rel="noopener">think2011编写维护的localResizeIMG</a></p>
+<p>不过iPhone4S 6.2.1系统有个bug，我用自己的思路改了改，至少在我的工程里是好用的<br><a href="https://github.com/think2011/localResizeIMG/issues/70" target="_blank" rel="noopener">iPhone4S 拍照后预览图片有黑边的bug</a></p>
+<p>题外话，这个js库的最大问题在于内存占用有点高，低端机在webview中可能会在此功能上闪退，我曾试过百度的webuploader，好像在这块处理的比较好。<br>但是代码有点多，分散在各个模块，我没有研究透，有兴趣的小伙伴可以自己看看！</p>
+<h3 id="2、react"><a href="#2、react" class="headerlink" title="2、react"></a>2、react</h3><p>公司里决定开始使用react，听到这个消息，我十分开心。这代表前端还是在公司中在持续发展的！</p>
+<p>有位大哥分享了react的初学经验，混合讲了一些工程化工具的使用，如webpack。</p>
+<p>但是既然我选择了Vue.js就好好的把Vue看完吧。</p>
+<p>原文有误：<br>毕竟这两个东西的思想还是不太一致的，虽然都是MVVM框架！（react不是MVVM框架）</p>
+<p>谢谢@阿炎</p>
+<p>更正为：<br><strong>react</strong>是一个专注于<strong>view</strong>层实现、构建组件化<strong>UI</strong>的<strong>js</strong>库，他可以搭配<strong>Flux</strong>，<strong>AngularJS</strong>，<strong>Backbone.js</strong> 等来实现一个完整的MVC或者MVVM框架的应用。</p>
+<p>有些文章提到<strong>Flux</strong>并不是一种框架，而是一种模式。这块我自己也没理解清楚，请大家自己甄别！</p>
+<h3 id="3、关于生活"><a href="#3、关于生活" class="headerlink" title="3、关于生活"></a>3、关于生活</h3><p>这周有个北漂盆友失联了，虽然最后发现是一个乌龙（仅仅是手机很多天没开机）。</p>
+<p>但是真的，真的给我很大的触动。</p>
+<p>我原来以为一个礼拜不打一个电话也没什么，但是知道他妈妈坐飞机过来找他，各种着急，报警，找人！</p>
+<p>最关心你的永远是他们，一定要和家里常联系！</p>
+<h3 id="4、打气的话"><a href="#4、打气的话" class="headerlink" title="4、打气的话"></a>4、打气的话</h3><p>人心其实很脆弱，所以我们要经常哄哄它，经常把手放在心脏旁，对自己说：Aai izz well，Aai izz well!</p>
+<p>非常感谢小伙伴们看完文章！谢谢你们的支持，我会继续努力的！</p>
+
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : 封宇 <br>
+        
+        原文链接 : <a href>http://blog.oneadvise.cn/2016/06/19/Vue-js学习笔记(4)/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpeg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/vue/">
+              #vue
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2016/06/11/Vue-js学习笔记(3)/" target="_self">Vue.js学习笔记（3）</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/2016/06/20/Vue-js学习笔记(5)/" target="_self">Vue.js学习笔记（5）</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz",
+      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2018, 1, 10).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com">
+  
+  
+  
+  <title>Vue.js学习笔记（6） | 小封的分享</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="框架,vue,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+    <meta name="description" content="前端及其上下游技术分享，建议">
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">oneadvise.cn</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path>
+          
+            <a href="javascript:void(0);" v-else>抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://github.com/windyrain/" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://juejin.im/user/589c5dfc128fe1005807aeda" target="_blank">
+                    掘金
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>Vue.js学习笔记（6）</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2016-06-26
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/框架/">
+            框架
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="Vue-js学习笔记(6)"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>© fengyu学习</p>
+<blockquote>
+<p>又是一个周末，继续我的Vue学习之旅</p>
+</blockquote>
+<blockquote>
+<p>上次学习了一些 <strong>v-if</strong> 的用法，这回又轮到谁了呢？</p>
+</blockquote>
+<blockquote>
+<p>当然是我们大名鼎鼎的列表渲染 <strong>v-for</strong> 指令</p>
+</blockquote>
+<h2 id="1、v-for-展现数据类型"><a href="#1、v-for-展现数据类型" class="headerlink" title="1、v-for 展现数据类型"></a>1、v-for 展现数据类型</h2><p>使用 <strong>v-for</strong> 指令可以展现：数组、对象、数值。</p>
+<p>数组：[1, 2, 3, 4, 5]</p>
+<pre><code>&lt;!-- v-for Array --&gt;
+&lt;div id=&quot;vue_demo_array&quot; v-for=&quot;item in array&quot;&gt;
+    {{item}}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo3 = new Vue({
+        el: &apos;#vue_demo_array&apos;,
+        data: {
+            array: [1, 2, 3, 4, 5]
+        }
+    })
+&lt;/script&gt;
+</code></pre><hr>
+<p>对象：{key1: value1, key2: value2}</p>
+<pre><code>&lt;!-- v-for Array --&gt;
+&lt;div id=&quot;vue_demo_object&quot; v-for=&quot;value in object&quot;&gt;
+    {{$key}} : {{value}}
+&lt;/div&gt;
+&lt;script&gt;
+    var vue_demo_object = new Vue({
+        el: &apos;#vue_demo_object&apos;,
+        data: {
+            object: {
+                name: &apos;封小胖&apos;,
+                job: &apos;前端小菜&apos;
+            }
+        }
+    })
+&lt;/script&gt;
+</code></pre><ul>
+<li>注意用法：对象的 <strong>value</strong> 值是直接被遍历出来的，获取 <strong>key</strong> 值，需要使用 <strong>Mustache语法</strong> + <strong>$key</strong></li>
+</ul>
+<hr>
+<p>数值：num（正整数）</p>
+<pre><code>&lt;!-- v-for Num --&gt;
+&lt;div id=&quot;vue_demo_num&quot; v-for=&quot;value in 10&quot;&gt;
+    {{value}}
+&lt;/div&gt;
+&lt;script&gt;
+    var vue_demo_num = new Vue({
+        el: &apos;#vue_demo_num&apos;
+    })
+&lt;/script&gt;
+</code></pre><ul>
+<li><p>注意：<strong>value</strong> <code>in</code> <strong>10</strong> 展现的数字为 <strong>0-9</strong>，且 <strong>num</strong> 必须为正整数，才会进行遍历（如果为0，遍历数为0次，我把这认为是不会遍历）。如果小伙伴们尝试使用负数，会得到以下提示：</p>
+<p>  Uncaught RangeError: Invalid array length</p>
+</li>
+</ul>
+<p><strong>v-for</strong> 的展现数据类型就说到这，如果小伙伴们发现他还有什么神奇的功效，可以告诉我哦！</p>
+<p>下面详细说说 <strong>v-for</strong> 展现数组这个重头戏！</p>
+<h2 id="v-for-与数组变动检测"><a href="#v-for-与数组变动检测" class="headerlink" title="v-for 与数组变动检测"></a>v-for 与数组变动检测</h2><p>大家也许都知道，<strong>Array</strong> 是 <strong>javascript</strong> 的内置对象。</p>
+<p>他拥有一些很好使的内置方法：<code>push()</code>、<code>pop()</code>、<code>shift()</code>、<code>unshift()</code>、<code>splice()</code>、<code>sort()</code>、<code>reverse()</code></p>
+<p>这本来是一件方便数组语义化改变的功德无量大好事，但是可是为难了我们的<strong>Vue.js</strong>了</p>
+<p>引用一段教程里的原话</p>
+<pre><code>因为 JavaScript 的限制，Vue.js 不能检测到下面数组变化：
+
+1、直接用索引设置元素，如 vm.items[0] = {}；
+2、修改数据的长度，如 vm.items.length = 0。
+</code></pre><p>我们再来看看 <strong>V8</strong> 引擎实现的 <strong>Array.prototype.push</strong> 方法</p>
+<pre><code>// Appends the arguments to the end of the array and returns the new
+// length of the array. See ECMA-262, section 15.4.4.7.
+function ArrayPush() {
+  CHECK_OBJECT_COERCIBLE(this, &quot;Array.prototype.push&quot;);
+
+  if (%IsObserved(this))
+    return ObservedArrayPush.apply(this, arguments);
+
+  var array = TO_OBJECT(this);
+  var n = TO_LENGTH_OR_UINT32(array.length);
+  var m = %_ArgumentsLength();
+
+  // It appears that there is no enforced, absolute limit on the number of
+  // arguments, but it would surely blow the stack to use 2**30 or more.
+  // To avoid integer overflow, do the comparison to the max safe integer
+  // after subtracting 2**30 from both sides. (2**31 would seem like a
+  // natural value, but it is negative in JS, and 2**32 is 1.)
+  if (m &gt; (1 &lt;&lt; 30) || (n - (1 &lt;&lt; 30)) + m &gt; kMaxSafeInteger - (1 &lt;&lt; 30)) {
+    throw MakeTypeError(kPushPastSafeLength, m, n);
+  }
+
+  for (var i = 0; i &lt; m; i++) {
+    array[i+n] = %_Arguments(i);
+  }
+
+  var new_length = n + m;
+  array.length = new_length;
+  return new_length;
+}
+</code></pre><p>以上这段代码的重点在于下面两句</p>
+<pre><code>array[i+n] = %\_Arguments(i);
+array.length = new_length;
+</code></pre><p>这两句话是不是似曾相识，没错，这就是 <strong>Vue.js</strong> 不能检查到的数组变化。</p>
+<p>那么我们亲爱的 <strong>Vue.js</strong> 是不是就对这些 <strong>内置函数</strong> 束手无策了呢？</p>
+<p>答案：No、No、No。作为一个如此帅气的框架，怎么可能就此低头。</p>
+<p>下面让我们看证据：（<strong>Vue.js</strong> 源码目录 <strong>src/observer/array.js</strong> ）</p>
+<p>粘一段核心的代码，如果大家有兴趣，可以去对应的目录，自己研究！</p>
+<pre><code>const arrayProto = Array.prototype
+export const arrayMethods = Object.create(arrayProto)
+
+.forEach(function (method) {
+  // cache original method
+  var original = arrayProto[method]
+  def(arrayMethods, method, function mutator () {
+    // avoid leaking arguments:
+    // http://jsperf.com/closure-with-arguments
+    var i = arguments.length
+    var args = new Array(i)
+    while (i--) {
+      args[i] = arguments[i]
+    }
+    var result = original.apply(this, args)
+    var ob = this.__ob__
+    var inserted
+    switch (method) {
+      case &apos;push&apos;:
+        inserted = args
+        break
+      case &apos;unshift&apos;:
+        inserted = args
+        break
+      case &apos;splice&apos;:
+        inserted = args.slice(2)
+        break
+    }
+    if (inserted) ob.observeArray(inserted)
+    // notify change
+    ob.dep.notify()
+    return result
+  })
+})
+</code></pre><p>以上代码中非常重要的3点</p>
+<pre><code>inserted 的获取
+ob.observeArray(inserted) //改变vm
+ob.dep.notify() //通知变化
+</code></pre><p>通过学习源码，我们可以看到，作者通过复写了 <strong>Array.prototype</strong> 中的内置方法，实现了数组变动检测。</p>
+<p>当然 <strong>Array.prototype</strong> 中还有一些返回新得数组对象的方法，比方说 <code>concat()</code> 、<code>slice()</code></p>
+<p>如果我们使用这些方法生成的新数组，直接赋值给老数组，并不会重新绘制 <strong>DOM</strong> ，而是使用最少的操作，实现页面更新。</p>
+<p>与此同理的是，当我们使用 <strong>track-by</strong> 指定索引时，新数组对旧数组直接赋值时，也会使用最小的操作，实现页面更新。</p>
+<p>先上业务代码：</p>
+<p>concat:</p>
+<pre><code>&lt;div id=&quot;vue_demo1&quot;&gt;
+    &lt;span&gt;编号&lt;/span&gt;
+    &lt;span&gt;姓名&lt;/span&gt;
+    &lt;span&gt;成绩&lt;/span&gt;
+    &lt;template v-for=&quot;data in studentList&quot;&gt;
+        &lt;br/&gt;
+        &lt;span&gt;{{$index+1}}&lt;/span&gt;
+        &lt;span&gt;{{data.name}}&lt;/span&gt;
+        &lt;span&gt;{{data.score}}&lt;/span&gt;
+    &lt;/template&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    var demo1 = new Vue({
+        el: &apos;#vue_demo1&apos;,
+        data: {
+            studentList: [
+                {name: &apos;封小胖&apos;, score:60},
+                {name: &apos;娄三胖&apos;, score:70},
+                {name: &apos;胡五胖&apos;, score:80}
+            ]
+        }
+    });
+&lt;/script&gt;
+
+&lt;script&gt;
+    function vueConcat(){
+         demo1.studentList = demo1.studentList.concat([{name: &apos;李大胖&apos;, score:90},
+                                 {name: &apos;强狗&apos;, score:100},
+                                 {name:&apos;车小瘦&apos;, score:100}]);
+    }
+&lt;/script&gt;
+</code></pre><hr>
+<p>track-by:</p>
+<pre><code>&lt;!-- v-for track-by --&gt;
+&lt;div id=&quot;vue_demo2&quot;&gt;
+    &lt;span&gt;编号&lt;/span&gt;
+    &lt;span&gt;姓名&lt;/span&gt;
+    &lt;span&gt;{{attrName}}&lt;/span&gt;
+    &lt;template v-for=&quot;data in studentList&quot; track-by=&quot;name&quot;&gt;
+        &lt;br/&gt;
+        &lt;span&gt;{{$index+1}}&lt;/span&gt;
+        &lt;input v-on:input=&quot;changeName&quot; :value=&quot;data.name&quot; /&gt;
+        &lt;span&gt;{{data.score}}&lt;/span&gt;
+    &lt;/template&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    var demo2 = new Vue({
+        el: &apos;#vue_demo2&apos;,
+        data: {
+            attrName: &apos;分数&apos;,
+            studentList: [
+                {name: &apos;封小胖&apos;, score:60},
+                {name: &apos;娄三胖&apos;, score:70},
+                {name: &apos;胡五胖&apos;, score:80}
+            ],
+            changeName: function(){
+                console.log(&apos;name is change&apos;);
+            }
+        }
+    })
+&lt;/script&gt;
+
+&lt;script&gt;
+    //查看track by 效果
+    function vueTrackBy(){
+        demo2.studentList =  [
+            {name: &apos;封小胖&apos;, score:90},
+            {name: &apos;娄三胖&apos;, score:95},
+            {name: &apos;胡五胖&apos;, score:100}
+        ]
+    }
+&lt;/script&gt;
+</code></pre><p>这两段代码都不会导致 <strong>DOM</strong> 的完全重绘，而是在现有的基础上，进行变换，下面我们来探究一下原理！</p>
+<h2 id="v-for中的重量级方法-Diff"><a href="#v-for中的重量级方法-Diff" class="headerlink" title="v-for中的重量级方法: Diff"></a>v-for中的重量级方法: Diff</h2><pre><code>* Diff, based on new data and old data, determine the
+* minimum amount of DOM manipulations needed to make the
+* DOM reflect the new data Array.
+
+且让我试着翻译一下：
+
+Diff方法：通过新旧数据的比对，使用最少的DOM操作次数，来完成新数据的展现
+</code></pre><p>哇瑟，这么棒吗？那他究竟是如何实现的呢！</p>
+<p>源码有点长，我就不粘了，小伙伴们想研究，请参见（源码目录：<strong>/directives/public/for.js</strong> 需要和 <strong>/directives.js</strong> 配合理解 ）</p>
+<p>说一说我的理解：</p>
+<ul>
+<li>使用 <code>getCachedFrag()</code> 方法判断元素是否可以 <code>reuse</code></li>
+</ul>
+<pre><code>// if中是使用track-by中设置的key值，来确认元素是否可以复用
+// else里则是数组使用 `concat()` 等方法赋值后，可以在value中通过this.id获取到frag元素，而直接使用一个值相同的变量赋值，不能获取到frag元素
+if (key || trackByKey || primitive) {
+    var id = getTrackByKey(index, key, value, trackByKey)
+    frag = this.cache[id]
+} else {
+    frag = value[this.id]
+}
+</code></pre><ul>
+<li><p>不能 <code>reuse</code> 的数据，<code>deleteCachedFrag</code> + <code>remove</code> 移除掉</p>
+</li>
+<li><p>使用 <code>findPrevFrag</code> + <code>move</code> 方法将旧元素移动到正确的位置</p>
+</li>
+<li><p>使用 <code>insert</code> 方法插入新的数据</p>
+</li>
+<li><p>执行 <code>nextTickHandler</code> 配合 <code>watch</code> 更新视图</p>
+</li>
+</ul>
+<p>所以 <code>track-by</code> 与 <code>concat</code> 在获取 <strong>frag</strong> 元素时，逻辑不同，其他处理均是异曲同工的！</p>
+<p>可能有朋友不知道什么值可以作为 <code>track-by</code> 的索引值，尝试使用 <strong>$index</strong> 、这样可以高效的利用原数据！</p>
+<p>引用一句教程中的原话，是使用 <strong>$index</strong> 作为 <code>track-by</code> 的值所需要注意的地方：</p>
+<pre><code>这让数据替换非常高效，但是也会付出一定的代价。
+
+因为这时 DOM 节点不再映射数组元素顺序的改变，不能同步临时状态（比如 &lt;input&gt; 元素的值）以及组件的私有状态。
+
+因此，如果 v-for 块包含 &lt;input&gt; 元素或子组件，要小心使用 track-by=&quot;$index&quot;
+</code></pre><h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>原本是不想这么早接触 <strong>Vue.js</strong> 的源码的，但是 <strong>v-for</strong> 指令的教程中的所提到高效，复用 <strong>DOM</strong>。</p>
+<p>不通过查看源码的方式，不能得到太好的理解。</p>
+<p>尽管我现在理解的也并不完整，但算是略知一二了。</p>
+<p>明天又要上班了，保持住学习的激情，加油！</p>
+
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : 封宇 <br>
+        
+        原文链接 : <a href>http://blog.oneadvise.cn/2016/06/26/Vue-js学习笔记(6)/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpeg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/vue/">
+              #vue
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2016/06/20/Vue-js学习笔记(5)/" target="_self">Vue.js学习笔记（5）</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/2017/01/10/初识React/" target="_self">初识React</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz",
+      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2018, 1, 10).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com">
+  
+  
+  
+  <title>Vue.js学习笔记（3） | 小封的分享</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="框架,vue,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+    <meta name="description" content="前端及其上下游技术分享，建议">
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">oneadvise.cn</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path>
+          
+            <a href="javascript:void(0);" v-else>抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://github.com/windyrain/" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://juejin.im/user/589c5dfc128fe1005807aeda" target="_blank">
+                    掘金
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>Vue.js学习笔记（3）</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2016-06-11
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/框架/">
+            框架
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="Vue-js学习笔记(3)"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>© fengyu学习</p>
+<blockquote>
+<p>端午节最后一天，坚持就是胜利。</p>
+</blockquote>
+<blockquote>
+<p>开始 <strong> Vue.js </strong> 的第三次学习吧！</p>
+</blockquote>
+<blockquote>
+<p>本次学习主要内容： <strong> 再探数据绑定 </strong> 、 <strong> computed属性 </strong></p>
+</blockquote>
+<h2 id="1、再探数据绑定"><a href="#1、再探数据绑定" class="headerlink" title="1、再探数据绑定"></a>1、再探数据绑定</h2><p>在 <strong> MVVM </strong> 框架中，<strong> Data Bindings </strong> 可是重中之重，尽管我们已经了解了一些数据绑定的写法，但是还有一些需要补充的新知识！</p>
+<h2 id="1-1、Mustache语法"><a href="#1-1、Mustache语法" class="headerlink" title="1.1、Mustache语法"></a>1.1、Mustache语法</h2><p>当我看到这个词的时候，我的内心是疑惑的，为什么将 <strong> 双大括号 </strong> 语法称之为 <strong> Mustache </strong> 语法。</p>
+<p>直到我查询了这个词的中文翻译，才豁然开朗</p>
+<pre><code>mustache 英[mə&apos;stɑ:ʃ] 美[ˈmʌsˌtæʃ, məˈstæʃ]
+
+n.胡子; 髭; 须状物; （哺乳动物的） 触须;
+</code></pre><p>这个 <strong> 胡子 </strong> 这个形象的比喻， 把 <strong> 双大括号 </strong> 形容的十分恰当。</p>
+<p>尽管纠结名词叫法并没有什么实际意义，但是也给学习过程平添了不少意外之喜！</p>
+<p>闲话不多说，下面来聊聊 <strong> Mustache </strong> 在 <strong> Vue </strong> 中的使用</p>
+<pre><code>// 第一种场景：普通使用
+&lt;div id=&quot;vue_demo1&quot;&gt;
+    {{ content }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo1 = new Vue({
+        el: &apos;#vue_demo1&apos;,
+        data: {
+            content: &apos;Mustache普通使用&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><hr>
+<pre><code>// 第二种场景：显示数据中的html
+&lt;div id=&quot;vue_demo2&quot;&gt;
+    {{{ content }}}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo2 = new Vue({
+        el: &apos;#vue_demo2&apos;,
+        data: {
+            content: &apos;&lt;p style=&quot;color:red&quot;&gt;Mustache显示HTML&lt;/p&gt;&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><p><strong>注意</strong> ：显示数据中的html需要使用 <strong> 三个大括号 </strong> 、可能叫 <strong> Big-Mustache </strong> 语法吧！</p>
+<p><strong>PS</strong> :千万不要直接使用此语法显示用户提交的内容，可能会导致 <strong>XSS</strong> 攻击</p>
+<hr>
+<pre><code>// 第三种场景：在Mustache语法中，可以解析js
+&lt;div id=&quot;vue_demo3&quot;&gt;
+    {{ content + " Javascript表达式使用" }}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo3 = new Vue({
+        el: &apos;#vue_demo3&apos;,
+        data: {
+            content: &apos;Mustache&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><p><strong>注意</strong> : 仅能够使用 <strong>单个</strong> 表达式，不能用多条语句</p>
+<hr>
+<p>还有一种方式，称为 <strong>绑定过滤器</strong> ，由于之前没有接触过，所以单独起一个小标题，讲讲内置的过滤器！</p>
+<h2 id="1-2、内置过滤器-filter"><a href="#1-2、内置过滤器-filter" class="headerlink" title="1.2、内置过滤器 filter"></a>1.2、内置过滤器 filter</h2><p>学习中发现了3个 <strong>Vue</strong> 内置的过滤器</p>
+<ul>
+<li><p><code>uppercase</code>  将数据中的字母均显示为大写字母</p>
+</li>
+<li><p><code>lowercase</code>  将数据中的字母均显示为小写字母</p>
+</li>
+<li><p><code>capitalize</code> 将数据中的首字母显示为大写字母</p>
+</li>
+<li><p>使用方法 <code>Mustache(content | 过滤器名称)</code></p>
+</li>
+</ul>
+<p>下面是使用<code>uppercase</code>的栗子</p>
+<pre><code>&lt;div id=&quot;vue_demo4&quot;&gt;
+    {{ content | uppercase}}
+&lt;/div&gt;
+&lt;script&gt;
+    var demo4 = new Vue({
+        el: &apos;#vue_demo4&apos;,
+        data: {
+            content: &apos;abcdefg&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><p>效果为：</p>
+<pre><code>ABCDEFG
+</code></pre><p>尽管在示例中，<strong>filter</strong> 并没有发挥很强的功效，但是我发现了他的 <strong>两</strong> 个优点</p>
+<ul>
+<li><p><strong>filter</strong> 不会改变 <strong>Vue</strong> 对象中数据的值，他只会按照定义的规则，来显示数据。这一点非常符合 <strong>M</strong> 与 <strong>V</strong> 分离的思想。</p>
+</li>
+<li><p><strong>filter</strong> 是具备 <strong>复用性</strong> 的，这样可以大大的提升开发的效率，避免代码冗余。</p>
+</li>
+</ul>
+<hr>
+<p>可能有小伙伴会问，这说出花来的东西，能不能自定义啊！</p>
+<p>答案是肯定的，不过我还没研究到自定义。</p>
+<p>而且据最近看的一些资料，<strong>Vue2.0</strong> 会取消过滤器，我没有验证这个观点的真实性。所以自定义放到以后再聊！</p>
+<h2 id="1-3、指令"><a href="#1-3、指令" class="headerlink" title="1.3、指令"></a>1.3、指令</h2><p>还记得 <code>v-if</code>、<code>v-for</code>、<code>v-model</code>么，原来这些以 <strong>v-</strong> 开头的属性，有一个专用名称 —— <strong>指令(Directives)</strong></p>
+<p>而如 <code>v-on:click</code> 冒号后面的，被称为　<strong>指令</strong>　的 <strong>参数</strong> ，<strong> 参数 </strong> 是用来告诉 <strong> Vue </strong> 对象，该属性应该和 <strong> HTML </strong> 的什么属性进行绑定</p>
+<p>举个栗子：</p>
+<pre><code>&lt;div id=&quot;vue_demo5&quot;&gt;
+    &lt;a v-bind:href=&quot;url&quot;&gt;Vue指令&lt;/a&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    var demo5 = new Vue({
+        el: &apos;#vue_demo5&apos;,
+        data: {
+            url: &apos;http://cn.vuejs.org/guide/syntax.html#指令&apos;
+        }
+    })
+&lt;/script&gt;
+</code></pre><p><code>v-bind</code> 指令的参数为 <strong>href</strong> ，即将 <strong>A</strong> 元素的 <strong>href</strong> 属性与 <strong>Vue</strong> 实例对象的 <strong>url</strong> 属性进行了关联</p>
+<p><code>v-bind</code> 指令后面，不仅可以跟着参数，还可以添加修饰符，还是刚才的栗子：</p>
+<pre><code>&lt;div id=&quot;vue_demo6&quot;&gt;
+    &lt;a v-bind:href.literal=&quot;http://cn.vuejs.org/guide/syntax.html#指令&quot;&gt;Vue指令&lt;/a&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    var demo6 = new Vue({
+        el: &apos;#vue_demo6&apos;
+    })
+&lt;/script&gt;
+</code></pre><p>当参数后，以 <strong> . + 修饰符 </strong> 的形式，添加了 <code>literal</code> 修饰符后，<strong>A</strong> 元素绑定的 <strong>href</strong> 属性值，就可以直接使用字符串了！</p>
+<p>此外，<code>v-bind</code> 与 <code>v-on</code> 还有缩略写法</p>
+<ul>
+<li><p><code>v-bind</code> 直接使用 <strong>:</strong> 连接参数即可,如<code>&lt;a :href.literal=&#39;http://cn.vuejs.org/guide/syntax.html#v-bind-缩写&#39;&gt;&lt;/a&gt;</code></p>
+</li>
+<li><p><code>v-on</code> 直接使用 <strong>@</strong> 连接参数即可，如<code>&lt;a @click=&quot;helloVue&quot;&gt;v-on缩写&lt;/a&gt;</code>，前提是 <strong>Vue</strong> 实例对象有 <code>helloVue</code> 这个方法</p>
+</li>
+</ul>
+<h1 id="2、computed-属性"><a href="#2、computed-属性" class="headerlink" title="2、computed 属性"></a>2、computed 属性</h1><p><code>computed</code> 顾名思义：计算。</p>
+<p>当我了解这个属性的作用时，简直太佩服作者的奇思妙想了，如此牛X的一个属性，给我们带来了好大的便捷。</p>
+<p><code>computed</code>的作用：当数据中有参数的值，会随着多个其他参数的值变化时，使用<code>computed</code>属性，能快捷的实现两者的关联。</p>
+<p>有点拗口，究竟是什么意思呢，举个计算总分的例子，您看完后，肯定和我一样，会觉得<code>computed</code>简直神了！</p>
+<pre><code>&lt;!-- 计算总分 --&gt;
+&lt;div id=&quot;vue_demo9&quot;&gt;
+    语文：&lt;input type=&quot;text&quot; v-model=&quot;Chinese&quot; number&gt;
+    数学：&lt;input type=&quot;text&quot; v-model=&quot;math&quot; number&gt;
+    英语：&lt;input type=&quot;text&quot; v-model=&quot;English&quot; number&gt;
+    总分：&lt;label&gt;{{score}}&lt;/label&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    var demo9 = new Vue({
+        el: &apos;#vue_demo9&apos;,
+        data:{
+            Chinese: 100,
+            math: 90,
+            English: 80
+        },
+        computed: {
+            score: function(){
+                return this.Chinese + this.math + this.English;
+            }
+        }
+    })
+&lt;/script&gt;
+</code></pre><p>这个程序会产生如下效果，改变语文、数学或是英语中，任何一项的值，总分都会重新计算</p>
+<p>   语文：100 数学：100 英语：80 总分：280</p>
+<p>先描述一下这个程序：</p>
+<ul>
+<li><p>使用 <code>v-model</code> 完成了语文、数学、英语成绩与 <strong>Vue实例对象</strong> 的双向绑定</p>
+</li>
+<li><p>使用 <code>computed</code> 属性，将总分 <code>score</code> 作为一个计算属性，值等于 <code>this.Chinese + this.math + this.English</code> 三门成绩之和</p>
+</li>
+<li><p><code>computed</code> 方法在 <strong>Vue实例对象</strong> 生命周期的 <code>beforeCompile</code> 后，会触发一次，之后，当计算值中的属性改变时，会再次进行计算</p>
+</li>
+</ul>
+<p>再对比一下，如果使用原生js来实现这段代码，两者的工作量，真的天差地别。</p>
+<hr>
+<p>我是根据，<a href="http://cn.vuejs.org/guide/computed.html" target="_blank" rel="noopener">计算属性</a>这一章，来学习的computed属性</p>
+<p>文章中有提到 <code>$watch</code> 与 <code>computed</code> 的对比，大赞 <code>computed</code> 在多属性变更下，更为出彩的表现！</p>
+<p>个人认为（没有看过源码，YY的），<code>computed</code> 和 <code>$watch</code> 在原理层面应该是相差无几的，主要是 <code>computed</code> 强调的是 <strong>计算</strong>，而 <code>watch</code> 强调的是 <strong>监控</strong> 。</p>
+<p>我不知道是否 <code>computed</code> 属性只是一个 <strong>多层监控</strong> 的封装，这可以以后再研究。</p>
+<p>现在需要掌握的是，如何将两者带给我们的便捷，应用在具体的场景中，达到 <strong>物尽其用、人尽其才</strong> 的目的</p>
+<hr>
+<p>文章中还提到了<code>setter</code>方法，</p>
+<p>由于暂时没有想到太好的例子，我就直接传送门了<a href="&quot;http://cn.vuejs.org/guide/computed.html#计算-setter&quot;">计算属性的set方法</a></p>
+<p>不过从这，也可以发现为什么 <strong>Vue.js</strong> 只能支持 <strong>IE9+</strong> 浏览器的其中一个原因了，使用了 <code>set</code> 和 <code>get</code> 访问器。</p>
+<p>这两个方法是 <strong> ECMAScript 5 </strong> 的特性，^_^!</p>
+<h1 id="3、结语"><a href="#3、结语" class="headerlink" title="3、结语"></a>3、结语</h1><p><strong> Vue </strong> 的基础知识学习也有 <strong>1/3</strong> 了，这门 <strong>MVVM</strong> 框架语言，带给了我很多惊喜。</p>
+<p>从 <strong>java web</strong> 转到前端开发，也有一年的时间了。原来颇有些完成任务即可，不思进取的心态，正在渐渐扭转。</p>
+<p>明天又要上班了，希望可以把这个系列的学习笔记，坚持写完。</p>
+<p>王阳明老先生说的好啊，知行合一，既然道理都明白了，怎么会有做不到的道理呢？</p>
+<p>与诸位小伙伴共勉！</p>
+
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : 封宇 <br>
+        
+        原文链接 : <a href>http://blog.oneadvise.cn/2016/06/11/Vue-js学习笔记(3)/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpeg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/vue/">
+              #vue
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2016/06/10/Vue-js学习笔记(2)/" target="_self">Vue.js学习笔记（2）</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/2016/06/19/Vue-js学习笔记(4)/" target="_self">Vue.js学习笔记（4）</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz",
+      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2018, 1, 10).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com">
+  
+  
+  
+  <title>react小知识(3) - 国际化中碰到的问题 | 小封的分享</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="框架,react,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+    <meta name="description" content="前端及其上下游技术分享，建议">
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">oneadvise.cn</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path>
+          
+            <a href="javascript:void(0);" v-else>抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://github.com/windyrain/" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://juejin.im/user/589c5dfc128fe1005807aeda" target="_blank">
+                    掘金
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>react小知识(3) - 国际化中碰到的问题</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-01-13
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/框架/">
+            框架
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="react小知识(3) - 国际化中碰到的问题"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><code>react</code>的国际化方案，可以说是十分成熟了。</p>
+<p><code>react-intl</code> 一用上，文本，日期、货币统统搞定。</p>
+<p>这里想和大家交流的并不是如何使用 <code>react-intl</code> ，抑或如何在 <code>redux</code> 框架中去使用。</p>
+<p>而是一个小知识，如何在 <code>placeholder</code> 等属性中支持多语言，并且你只需按照 <code>react-intl</code> 的方式去维护多套语言库。</p>
+<p>因为像 <code>placeholder</code> , <code>title</code> 这种 <code>HTML</code> 自带的属性，组件库向来都是直接支持的，那么问题来了，使用 <code>react-intl</code> 中的 <code>&lt;FormattedMessage /&gt;</code> 作为一个 <code>Object</code>  是无法用到这些属性中去的，那么我们应该怎么去处理这个问题呢？</p>
+<h2 id="他山之石，可以攻玉"><a href="#他山之石，可以攻玉" class="headerlink" title="他山之石，可以攻玉"></a>他山之石，可以攻玉</h2><p>下面先说几个我搜索到的方法。</p>
+<ul>
+<li>方法一：<code>injectIntl()</code> 是官方推荐的方法。</li>
+<li>方法二：利用 <code>&lt;FormattedMessage /&gt;</code> 的回调方法。</li>
+</ul>
+<p>以上两种方法都可以在这个<a href="https://github.com/yahoo/react-intl/issues/749#issuecomment-265600521" target="_blank" rel="noopener">issue</a>中找到。</p>
+<p>两种方式的实现原理很清晰。</p>
+<p>方法一，强调使用高阶组件来处理这个问题，将 <code>intl</code> 注入到组件的 <code>props</code> 中，最后使用 <code>intl.formatMessage</code> 来解决问题。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/13/168479c42bfb7116?w=1564&amp;h=704&amp;f=png&amp;s=125834" alt></p>
+<p>方法二，很巧妙的利用到了 <code>&lt;FormattedMessage /&gt;</code> 组件的返回值，函数式的渲染了自身的子组件。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/13/168479cd151b12b5?w=1712&amp;h=602&amp;f=png&amp;s=106002" alt></p>
+<p>这两种思路固然都有可取之处，但是也有相应的问题。</p>
+<h3 id="方法一：注入injectIntl"><a href="#方法一：注入injectIntl" class="headerlink" title="方法一：注入injectIntl()"></a>方法一：注入<code>injectIntl()</code></h3><p>如果没有从全局层面出发，去封装的这种只是用于渲染的高阶组件，带来的成本，可想而知。</p>
+<p>举个例子，我们有时候会封装一些自己的基础业务组件 <code>BaseApp</code> ，他们本身并没有render方法，在不同权限的客户访问时，实现不同的派生类( <code>StaffApp</code> , <code>CustomerApp</code> )，对基础业务组件进行调用。</p>
+<pre><code>class BaseApp extends Component {
+  renderPersonInfo() {}
+  renderDataAnalytical() {}
+  renderTasks() {}
+}
+
+class StaffApp extends BaseApp {
+  render() {
+    return (
+      {
+        this.renderPersonInfo(),
+        this.renderDataAnalytical()
+      }
+    )
+  }
+}
+
+class CustomerApp extends BaseApp {
+   render() {
+    return (
+      {
+        this.renderPersonInfo(),
+        this.renderTasks()
+      }
+    )
+  }       
+}
+</code></pre><p>假设这个时候我们对 <code>BaseApp</code> 进行 <code>injectIntl</code> ，那么原本可以继承的方法，就全部失效了。所以我们必须对派生类进行 <code>injectIntl</code> , 相当于，本来要做一次的事情，做了 <code>N</code> 次。</p>
+<p>当然，我们可以把 <code>BaseApp</code> 中用到 <code>placeholder</code> 的组件，单独的抽出来，进行 <code>injectIntl</code> ，不失为一种解决方案。</p>
+<p>所以虽然 <code>injectIntl</code> 是把好刀，但是用得好，用不好，就要看自己对整个项目的理解了。</p>
+<h3 id="方法二：组件返回值"><a href="#方法二：组件返回值" class="headerlink" title="方法二：组件返回值"></a>方法二：组件返回值</h3><p>抛开这么写，到底是否优美不谈。</p>
+<p>最大的问题，还是带来了不必要的 <code>dom</code> 结构，因为 <code>&lt;FormattedMessage /&gt;</code> 组件是会渲染 <code>&lt;span /&gt;</code> 标签的。</p>
+<p>想象下你的 <code>input</code> 组件外面还包了一个 <code>span</code> 是不是瑟瑟发抖呢。</p>
+<h2 id="用自己的思路，试试看"><a href="#用自己的思路，试试看" class="headerlink" title="用自己的思路，试试看"></a>用自己的思路，试试看</h2><p>基于上述情况，我认为以上两种方法，不太适合目前的项目，那就是要自己造轮子啦。</p>
+<p>开心，又可以自己造轮子啦。</p>
+<p>先亮代码</p>
+<pre><code>const intl = {
+  lang: {}
+};
+
+intl.formatMessage = (props) =&gt; {
+  let message = intl.lang[props.id] || props.defaultMessage || props.id;
+
+  if (!props.values) return message;
+
+  const keys = Object.keys(props.values);
+
+  for (let i = 0, l = keys.length; i &lt; l; i++) {
+    const key = keys[i];
+    message = message.replace(new RegExp(`{${key}}`, &quot;g&quot;), props.values[key]);
+  }
+
+  return message;
+}
+
+export default intl;
+</code></pre><p>原理比较简单，两步。</p>
+<p>程序初始化的时候，对 <code>intl.lang</code> 赋值，同 <code>react-intl</code> 。</p>
+<p>利用 <code>props</code> 中的 <code>id</code> 和 <code>values</code> 属性，获取值并进行替换，返回真正的值。</p>
+<p>使用方法：</p>
+<pre><code>&lt;Input 
+  value={showName}
+  // placeholder=&quot;支持(1-10)位中文、英文与数字&quot;
+  placeholder={intl.formatMessage({id: &quot;intl.showName.placeholder&quot;})}
+  onChange={this.handleNameChange.bind(this)}
+  /&gt;
+</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>学习框架和类库时，要学习精华之处，同时谨记自己一样有写出适合自己项目代码的类库的能力，多分析，勤思考。</li>
+</ul>
+<p>———————–分割线———————–</p>
+<h2 id="评论中提到的问题"><a href="#评论中提到的问题" class="headerlink" title="评论中提到的问题"></a>评论中提到的问题</h2><h3 id="redux中如何使用及如何动态切换语言"><a href="#redux中如何使用及如何动态切换语言" class="headerlink" title="redux中如何使用及如何动态切换语言"></a>redux中如何使用及如何动态切换语言</h3><p><img src="https://user-gold-cdn.xitu.io/2019/1/15/1684fbb233bfa9a9?w=804&amp;h=458&amp;f=png&amp;s=86577" alt></p>
+<p>粘贴一段项目中的实现</p>
+<p><code>redux Provider</code> 和 <code>react-intl IntlProvider</code> 并没有冲突，可以直接嵌套使用。 </p>
+<p>动态切换语言，我这里的思路是把<code>ReactDOM.render</code>抽成一个方法，切换的使用再次调用就可以了。仅供参考，可能有更好的思路。</p>
+<p>效果：</p>
+<ul>
+<li>中文</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/15/1684fc0bc07ac2bd?w=1876&amp;h=688&amp;f=png&amp;s=163876" alt></p>
+<ul>
+<li>英文</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/15/1684fc2d39ef29e3?w=1886&amp;h=696&amp;f=png&amp;s=171933" alt></p>
+<p>图中部分字段还未翻译，故切换时没有变更。</p>
+
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : 封宇 <br>
+        
+        原文链接 : <a href>http://blog.oneadvise.cn/2019/01/13/react小知识(3) - 国际化中碰到的问题/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpeg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/react/">
+              #react
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2019/01/07/react小知识(2) - defaultProps的实现/" target="_self">react小知识(2) - defaultProps的实现</a>
+      </div>
+    
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz",
+      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Hyq9wkH495DgNHWhDQCOfQSp-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2018, 1, 10).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>
