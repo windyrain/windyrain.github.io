@@ -417,7 +417,7 @@ export default App
     new Valine({
       el: "#vcomments",
       appId: "UjpJ4SeqxFAS8IIsotYdqoOc-gzGzoHsz",
-      appKey: "WaR7nrzhliHj9aVwdQzkdlGd",
+      appKey: "marmCWNbCXDxSOVvIcbsxQTr",
       notify: false,
       verify: false,
       avatar: "robohash",
@@ -432,7 +432,7 @@ export default App
     <script defer>
 const valineAPI = (() => {
   try {
-    AV.init("UjpJ4SeqxFAS8IIsotYdqoOc-gzGzoHsz", "WaR7nrzhliHj9aVwdQzkdlGd");
+    AV.init("UjpJ4SeqxFAS8IIsotYdqoOc-gzGzoHsz", "marmCWNbCXDxSOVvIcbsxQTr");
   } catch(error) {}
   const isExist = (identity) => {
     identity = identity || getRealPath();
